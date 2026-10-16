@@ -1,0 +1,8 @@
+.env
+.git
+__pycache__
+build
+dist
+.crproject.json
+pyrightconfig.json
+main.spec
