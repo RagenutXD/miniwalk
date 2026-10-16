@@ -80,7 +80,8 @@ class App:
             self.thread.join()
 
             if self.request_timer <= 0:
-                if not self.res[0][0].get('failed'): self._refresh_envelopes()
+                if len(self.res[0]) > 0:
+                        self._refresh_envelopes()
                 self._request_unread()
                 self.request_timer = self.request_interval
 

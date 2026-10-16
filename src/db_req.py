@@ -14,8 +14,8 @@ def get_unread_letters(res):
     try: 
         data = requests.get(url, params=payload, headers=headers)
         res[0] = data.json()
-    except requests.exceptions.RequestException as e:
-        res[0] = [{'failed':e}]
+    except :
+        res[0] = []
 
 def mark_as_read(id, res):
     url = f"{os.environ.get('SUPABASE_URL')}/rest/v1/letters"
@@ -29,7 +29,8 @@ def mark_as_read(id, res):
 
     try:
         data = requests.patch(url, params=payload, headers=headers, data={'seen': 'true'})
-        res[0] = data.status_code
-    except requests.exceptions.RequestException as e:
-        res[0] = [{'failed':e}]
+        res[0] = data.json()
+    except :
+        res[0] = []
+
 

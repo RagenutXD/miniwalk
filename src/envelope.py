@@ -37,12 +37,12 @@ class Envelope:
         if self.state == 'open':
             if not self.thread.is_alive() :
                 self.thread.join()
-                if self.res[0][0].get('failed'):
-                    self.state = 'close'
-                    self.thread = self._make_thread()
-                else:
+                if len(self.res[0]) > 0:
                     webbrowser.open(self.res[0][0]['content'])
                     self.state = 'to_kill'
+                else:
+                    self.state = 'close'
+                    self.thread = self._make_thread()
             return
 
         if pygame.mouse.get_just_pressed()[0] and \
