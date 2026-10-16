@@ -19,7 +19,10 @@ class Envelope:
         self.theta = 0
         
         self.res = [[]]
-        self.thread = threading.Thread(target=mark_as_read, args=(self.id,self.res,))
+        self.thread = self._make_thread()
+
+    def _make_thread(self):
+        return threading.Thread(target=mark_as_read, args=(self.id,self.res,))
 
     def _get_rect(self):
         return pygame.Rect(self.pos[0], self.pos[1], 16, 16)
@@ -32,9 +35,14 @@ class Envelope:
 
         # if it's open, safe to say the thread has started
         if self.state == 'open':
-            if not self.thread.is_alive():
-                webbrowser.open(self.res[0][0]['content'])
-                self.state = 'to_kill'
+            if not self.thread.is_alive() :
+                self.thread.join()
+                if self.res[0][0].get('failed'):
+                    self.state = 'close'
+                    self.thread = self._make_thread()
+                else:
+                    webbrowser.open(self.res[0][0]['content'])
+                    self.state = 'to_kill'
             return
 
         if pygame.mouse.get_just_pressed()[0] and \

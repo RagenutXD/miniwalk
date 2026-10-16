@@ -10,9 +10,12 @@ def get_unread_letters(res):
         'apikey': os.environ.get('SUPABASE_SECRET_KEY'),
         'Authorization': f"Bearer {os.environ.get('SUPABASE_SECRET_KEY')}"
     }
-
-    data = requests.get(url, params=payload, headers=headers)
-    res[0] = data.json()
+    
+    try: 
+        data = requests.get(url, params=payload, headers=headers)
+        res[0] = data.json()
+    except requests.exceptions.RequestException as e:
+        res[0] = [{'failed':e}]
 
 def mark_as_read(id, res):
     url = f"{os.environ.get('SUPABASE_URL')}/rest/v1/letters"
@@ -24,5 +27,9 @@ def mark_as_read(id, res):
         'Prefer': 'return=representation'
     }
 
-    data = requests.patch(url, params=payload, headers=headers, data={'seen': 'true'})
-    res[0] = data.json()
+    try:
+        data = requests.patch(url, params=payload, headers=headers, data={'seen': 'true'})
+        res[0] = data.status_code
+    except requests.exceptions.RequestException as e:
+        res[0] = [{'failed':e}]
+
