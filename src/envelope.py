@@ -1,8 +1,8 @@
 import webbrowser
 
-import pygame, math , threading
+import pygame, math , threading, os
 
-from .utils import load_image
+from .utils import file_name_fmt, load_image
 from .db_req import mark_as_read
 
 class Envelope:
@@ -31,14 +31,31 @@ class Envelope:
         self.state = 'open'
         self.thread.start()
 
-    def update(self, dt, mpos):
 
+    def _save_msg(self, title, content, date):
+        if not os.path.exists('letters'):
+            os.mkdir('letters')
+    
+        fname = file_name_fmt(date)
+        fpath = f'letters/{fname}.md'
+        with open(f'letters/{fname}.md', 'w+') as f:
+            f.write(f'# {title}\n')
+            f.write(f'{content}\n')
+
+        return fpath
+
+    def update(self, dt, mpos):
         # if it's open, safe to say the thread has started
         if self.state == 'open':
             if not self.thread.is_alive() :
                 self.thread.join()
                 if len(self.res[0]) > 0:
-                    webbrowser.open(self.res[0][0]['content'])
+                    fpath = self._save_msg(
+                        self.res[0][0]['title'],
+                        self.res[0][0]['content'],
+                        str(self.res[0][0]['created_at'])
+                    )
+                    webbrowser.open(fpath)
                     self.state = 'to_kill'
                 else:
                     self.state = 'close'

@@ -14,3 +14,16 @@ def load_images(path):
 
 def log_warn(msg):
     print('[WARNING]:', msg) 
+
+def file_name_fmt(date:str):
+    # 2026-10-16T04:17:34.793352+00:00
+    print(date)
+    fmt_str = ''
+
+    for c in date:
+        if c == '.': continue
+        if c == '+': break
+        fmt_str += c
+
+    return fmt_str
+        

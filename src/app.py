@@ -10,7 +10,7 @@ class App:
         os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0, 0)
         pygame.init()
         self.screen = pygame.display.set_mode((300,300), pygame.NOFRAME)
-        self.zoom = self.screen.get_size()[0] / 60
+        self.zoom = pygame.display.get_window_size()[0]/ 60
         self.display = pygame.Surface((60,60))
         self.clock = pygame.Clock()
         self.dt = 0
@@ -32,6 +32,8 @@ class App:
         self.thread = threading.Thread(target=get_unread_letters, args=(self.res,))
         self.thread.start()
 
+        self.ad = [0,0]
+
     def _change_cat_sprite(self, n):
         self.cat_asset_idx = (self.cat_asset_idx + n) % len(self.cat_assets)
         self.cat.change_sprite(self.cat_assets[self.cat_asset_idx])
@@ -44,6 +46,7 @@ class App:
             pygame.mouse.get_pos()[0] / self.zoom,
             pygame.mouse.get_pos()[1] / self.zoom
         ]
+        self.ad = adjusted_mpos
 
         keys_pressed = pygame.key.get_just_pressed()
 
@@ -115,6 +118,8 @@ class App:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.WINDOWRESIZED:
+                    self.zoom = pygame.display.get_window_size()[0]/ 60
 
             self._update()
             self._draw()
